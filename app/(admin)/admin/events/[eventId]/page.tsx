@@ -24,11 +24,6 @@ export default async function AdminEventDetailPage({
   const totalGuests = await countGuestsByEvent(event.id);
   const totalPhotos = await countUploadedPhotosByEvent(event.id);
 
-  const publicUrl = `/${event.slug}`;
-  const sharedUrl = `/${event.slug}/shared`;
-  const uploadEntryUrl = `/${event.slug}/enter`;
-
-  // 🔥 BASE URL DINÁMICA (PRODUCCIÓN)
   const baseUrl =
     process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
     "http://localhost:3000";
@@ -36,8 +31,9 @@ export default async function AdminEventDetailPage({
   const publicEventUrl = `${baseUrl}/${event.slug}`;
   const enterEventUrl = `${baseUrl}/${event.slug}/enter`;
 
+  // 🔥 QR ahora apunta a la BIENVENIDA
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(
-    enterEventUrl
+    publicEventUrl
   )}`;
 
   const toggleStatusAction = toggleEventStatusAction.bind(
@@ -123,8 +119,7 @@ export default async function AdminEventDetailPage({
         </h2>
 
         <p className="mt-3 text-stone-600">
-          Comparte este código QR con tus invitados para que entren directo al
-          formulario del evento.
+          Comparte este código QR con tus invitados para que entren al evento.
         </p>
 
         <div className="mt-5 grid gap-6 lg:grid-cols-[240px,1fr] lg:items-start">
@@ -144,16 +139,9 @@ export default async function AdminEventDetailPage({
               </p>
             </div>
 
-            <div>
-              <p className="font-medium text-stone-900">URL de entrada</p>
-              <p className="mt-1 break-all rounded-2xl bg-stone-50 px-3 py-2">
-                {enterEventUrl}
-              </p>
-            </div>
-
             <div className="flex flex-wrap gap-3">
               <a
-                href={enterEventUrl}
+                href={publicEventUrl}
                 target="_blank"
                 rel="noreferrer"
                 className="rounded-2xl border px-4 py-3 text-stone-800"
@@ -161,7 +149,7 @@ export default async function AdminEventDetailPage({
                 Abrir enlace
               </a>
 
-              <CopyButton text={enterEventUrl} />
+              <CopyButton text={publicEventUrl} />
 
               <a
                 href={qrUrl}

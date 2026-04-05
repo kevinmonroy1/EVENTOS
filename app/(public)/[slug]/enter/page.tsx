@@ -17,51 +17,60 @@ export default async function EnterPage({ params }: EnterPageProps) {
   const submitAction = resolveGuestEntryAction.bind(null, slug);
 
   return (
-    <div className="space-y-6">
-      <section className="wedding-card p-7">
-        <p className="wedding-label">{event.couple_names}</p>
+    <div className="wedding-shell">
+      <div className="wedding-container space-y-6">
+        <section className="wedding-card wedding-hero wedding-section-glow p-7">
+          <p className="wedding-label">{event.couple_names}</p>
 
-        <h1 className="mt-3 text-3xl font-semibold wedding-title">
-          Ingresa tu nombre
-        </h1>
+          <h1 className="mt-4 text-4xl font-semibold leading-tight wedding-title">
+            Ingresa tu nombre
+          </h1>
 
-        <div className="wedding-divider mt-4" />
+          <div className="wedding-divider mt-5" />
 
-        <p className="mt-5 leading-7 wedding-muted">
-          Escribe tu nombre para comenzar a compartir tus fotografías del
-          evento.
-        </p>
-      </section>
+          <p className="mt-5 text-base leading-8 wedding-muted">
+            Escribe tu nombre para comenzar a compartir tus fotografías y formar
+            parte de los recuerdos de este día tan especial.
+          </p>
 
-      <section className="wedding-card p-7">
-        <form action={submitAction} className="space-y-5">
-          <div className="space-y-2">
-            <label
-              htmlFor="guestName"
-              className="text-sm font-medium text-[var(--color-primary)]"
-            >
-              Tu nombre
-            </label>
-
-            <input
-              id="guestName"
-              name="guestName"
-              type="text"
-              placeholder="Ejemplo: Kevin"
-              className="w-full rounded-2xl border border-[var(--color-border-soft)] bg-white px-4 py-3 text-[var(--color-text)] outline-none transition focus:border-[var(--color-gold)]"
-              required
-              minLength={2}
-            />
+          <div className="mt-6 wedding-mini-note px-4 py-4">
+            <p className="text-sm leading-6 wedding-soft">
+              Tu nombre nos ayudará a organizar mejor las imágenes que compartas
+              durante el evento.
+            </p>
           </div>
+        </section>
 
-          <button
-            type="submit"
-            className="wedding-button-primary w-full rounded-2xl px-4 py-3 transition"
-          >
-            Continuar
-          </button>
-        </form>
-      </section>
+        <section className="wedding-card p-7">
+          <form action={submitAction} className="space-y-6">
+            <div className="space-y-3">
+              <label
+                htmlFor="guestName"
+                className="text-sm font-medium text-[var(--color-primary)]"
+              >
+                Tu nombre
+              </label>
+
+              <input
+                id="guestName"
+                name="guestName"
+                type="text"
+                placeholder="Ejemplo: Kevin"
+                className="wedding-input"
+                required
+                minLength={2}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="wedding-button-primary w-full px-4 py-3 text-base"
+            >
+              Continuar
+            </button>
+          </form>
+        </section>
+      </div>
     </div>
   );
 }

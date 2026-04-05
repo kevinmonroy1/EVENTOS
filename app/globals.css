@@ -219,3 +219,300 @@ body {
 .subtitle {
   @apply text-stone-600;
 }
+
+@import "tailwindcss";
+
+:root {
+  --color-bg: #f7f1ea;
+  --color-surface: rgba(255, 252, 247, 0.96);
+  --color-surface-strong: #fffdf9;
+  --color-border-soft: #e8dccd;
+  --color-primary: #0f4c4c;
+  --color-primary-hover: #0c3f3f;
+  --color-primary-soft: #e9f2ef;
+  --color-gold: #caa468;
+  --color-gold-soft: rgba(202, 164, 104, 0.18);
+  --color-title: #16323f;
+  --color-text: #6b6770;
+  --color-text-soft: #8a8590;
+  --color-white: #ffffff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top, rgba(202, 164, 104, 0.08), transparent 28%),
+    linear-gradient(180deg, #fbf7f2 0%, var(--color-bg) 100%);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(15, 76, 76, 0.14);
+  color: var(--color-title);
+}
+
+.wedding-shell {
+  position: relative;
+}
+
+.wedding-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(202, 164, 104, 0.06), transparent 18%),
+    radial-gradient(circle at 85% 10%, rgba(15, 76, 76, 0.05), transparent 16%),
+    radial-gradient(circle at 50% 100%, rgba(202, 164, 104, 0.05), transparent 18%);
+  z-index: 0;
+}
+
+.wedding-container {
+  position: relative;
+  z-index: 1;
+}
+
+.wedding-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 32px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border-soft);
+  box-shadow:
+    0 12px 30px rgba(30, 41, 59, 0.05),
+    0 3px 10px rgba(30, 41, 59, 0.04);
+  backdrop-filter: blur(8px);
+}
+
+.wedding-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.22) 0%,
+    transparent 35%,
+    transparent 100%
+  );
+}
+
+.wedding-hero {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 252, 247, 0.96)),
+    radial-gradient(circle at top right, rgba(202, 164, 104, 0.08), transparent 30%);
+}
+
+.wedding-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.wedding-title {
+  color: var(--color-title);
+  letter-spacing: -0.03em;
+}
+
+.wedding-muted {
+  color: var(--color-text);
+}
+
+.wedding-soft {
+  color: var(--color-text-soft);
+}
+
+.wedding-divider {
+  width: 58px;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--color-gold) 0%,
+    rgba(202, 164, 104, 0.26) 100%
+  );
+}
+
+.wedding-button-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  border-radius: 999px;
+  padding-inline: 1.5rem;
+  background: linear-gradient(180deg, #11514d 0%, #0d4542 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow:
+    0 10px 22px rgba(17, 81, 77, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.wedding-button-primary:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, #13605b 0%, #0f4c49 100%);
+  box-shadow:
+    0 14px 28px rgba(17, 81, 77, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.wedding-button-primary:disabled {
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.wedding-button-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 56px;
+  border-radius: 999px;
+  padding-inline: 1.5rem;
+  border: 1px solid var(--color-border-soft);
+  background: rgba(255, 253, 249, 0.88);
+  color: var(--color-title);
+  font-weight: 500;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.wedding-button-secondary:hover {
+  transform: translateY(-1px);
+  border-color: rgba(202, 164, 104, 0.5);
+  background: #fffdf9;
+  box-shadow: 0 8px 20px rgba(30, 41, 59, 0.05);
+}
+
+.wedding-button-secondary:disabled {
+  opacity: 0.55;
+  transform: none;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.wedding-input {
+  width: 100%;
+  min-height: 58px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-soft);
+  background: rgba(255, 253, 249, 0.96);
+  color: var(--color-title);
+  padding: 0 20px;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.wedding-input::placeholder {
+  color: #9a949e;
+}
+
+.wedding-input:focus {
+  border-color: rgba(202, 164, 104, 0.7);
+  box-shadow:
+    0 0 0 4px rgba(202, 164, 104, 0.14),
+    0 8px 18px rgba(30, 41, 59, 0.04);
+  background: #fffefb;
+}
+
+.wedding-progress-track {
+  height: 12px;
+  width: 100%;
+  border-radius: 999px;
+  background: #ede4d8;
+  overflow: hidden;
+}
+
+.wedding-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    #caa468 0%,
+    #b98a3f 28%,
+    #1b655f 70%,
+    #0f4c4c 100%
+  );
+  box-shadow: 0 4px 12px rgba(15, 76, 76, 0.18);
+  transition: width 0.35s ease;
+}
+
+.wedding-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-soft);
+  background: rgba(255, 253, 249, 0.92);
+  color: var(--color-text);
+  font-size: 0.875rem;
+}
+
+.wedding-photo-frame {
+  overflow: hidden;
+  border-radius: 22px;
+  border: 1px solid var(--color-border-soft);
+  background: var(--color-surface-strong);
+  box-shadow: 0 8px 18px rgba(30, 41, 59, 0.05);
+}
+
+.wedding-photo-frame img,
+.wedding-photo-frame span,
+.wedding-photo-frame div {
+  transition: transform 0.35s ease;
+}
+
+.wedding-photo-frame:hover img {
+  transform: scale(1.04);
+}
+
+.wedding-empty {
+  border-radius: 24px;
+  border: 1px dashed rgba(202, 164, 104, 0.42);
+  background: rgba(255, 250, 244, 0.72);
+}
+
+.wedding-mini-note {
+  border-radius: 20px;
+  border: 1px solid rgba(202, 164, 104, 0.24);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 250, 242, 0.95) 0%,
+    rgba(255, 253, 249, 0.92) 100%
+  );
+}
+
+.wedding-section-glow {
+  position: relative;
+}
+
+.wedding-section-glow::before {
+  content: "";
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(202, 164, 104, 0.12), transparent 65%);
+  pointer-events: none;
+}

@@ -2,15 +2,7 @@
 
 import { motion } from "framer-motion";
 
-interface GoldButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
-}
-
-export default function GoldButton({
-  children,
-  ...props
-}: GoldButtonProps) {
+export default function GoldButton(props: any) {
   return (
     <motion.button
       type={props.type || "button"}
@@ -19,7 +11,7 @@ export default function GoldButton({
       className="w-full rounded-2xl bg-gradient-to-r from-yellow-400 via-yellow-500 to-yellow-600 px-4 py-3 text-white font-semibold shadow-md"
       {...props}
     >
-      {children}
+      {props.children}
     </motion.button>
   );
 }

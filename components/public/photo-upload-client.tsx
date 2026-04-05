@@ -115,9 +115,7 @@ export default function PhotoUploadClient({
       });
 
     if (error) {
-      throw new Error(
-        `Error subiendo "${file.name}": ${error.message}`
-      );
+      throw new Error(`Error subiendo "${file.name}": ${error.message}`);
     }
 
     const { data } = supabase.storage
@@ -148,34 +146,24 @@ export default function PhotoUploadClient({
       try {
         const filesData = [];
 
-        // 🔥 SUBIDA SECUENCIAL (más estable en móvil)
         for (const image of selectedImages) {
-          const result = await uploadSingleFile(
-            supabase,
-            image.file
-          );
+          const result = await uploadSingleFile(supabase, image.file);
           filesData.push(result);
         }
 
-        // 🔥 registrar en backend
         await uploadGuestPhotosAction(slug, guestId, filesData);
 
-        // limpiar previews
         selectedImages.forEach((image) => {
           URL.revokeObjectURL(image.previewUrl);
         });
 
         setSelectedImages([]);
-
         setMessage(
           `${guestName}, se subieron ${filesData.length} foto(s) correctamente.`
         );
-
       } catch (error) {
         const errorMessage =
-          error instanceof Error
-            ? error.message
-            : "Error al subir fotos.";
+          error instanceof Error ? error.message : "Error al subir fotos.";
 
         setMessage(errorMessage);
       }
@@ -189,7 +177,6 @@ export default function PhotoUploadClient({
         type="file"
         accept="image/*"
         multiple
-        capture="environment"
         className="hidden"
         onChange={handleFileChange}
       />
@@ -231,16 +218,18 @@ export default function PhotoUploadClient({
       {selectedImages.length > 0 && (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {selectedImages.map((image) => (
-            <div key={image.id} className="rounded-2xl border overflow-hidden">
+            <div key={image.id} className="overflow-hidden rounded-2xl border">
               <img
                 src={image.previewUrl}
+                alt={image.file.name}
                 className="h-32 w-full object-cover"
               />
 
               <div className="p-2">
                 <button
+                  type="button"
                   onClick={() => handleRemoveImage(image.id)}
-                  className="w-full text-sm border rounded-xl py-1"
+                  className="w-full rounded-xl border py-1 text-sm"
                 >
                   Quitar
                 </button>

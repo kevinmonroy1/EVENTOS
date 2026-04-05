@@ -2,59 +2,52 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import {
-  getGuestById,
-  updateGuestUploadProgress,
-} from "@/server/repositories/guests.repository";
-import {
-  countUploadedPhotosByGuest,
-  deletePhotoById,
-  getPhotoById,
-} from "@/server/repositories/photos.repository";
+import { getGuestById } from "@/server/repositories/guests.repository";
 
-export async function deleteGuestPhotoAction(
+export async function deleteGuestAction(
   eventId: string,
-  guestId: string,
-  photoId: string
+  guestId: string
 ) {
+  const supabase = await createClient();
+
   const guest = await getGuestById(guestId);
 
   if (!guest) {
     throw new Error("El invitado no existe.");
   }
 
-  const photo = await getPhotoById(photoId);
+  // 🔥 obtener todas las fotos del invitado
+  const { data: photos } = await supabase
+    .from("photos")
+    .select("*")
+    .eq("guest_id", guestId);
 
-  if (!photo) {
-    throw new Error("La foto no existe.");
-  }
+  // 🔥 eliminar archivos del storage
+  if (photos && photos.length > 0) {
+    const paths = photos
+      .filter((p) => p.storage_path)
+      .map((p) => p.storage_path);
 
-  if (photo.guest_id !== guest.id || photo.event_id !== eventId) {
-    throw new Error("La foto no pertenece a este invitado o evento.");
-  }
-
-  const supabase = await createClient();
-
-  if (photo.storage_bucket && photo.storage_path) {
-    const { error: storageError } = await supabase.storage
-      .from(photo.storage_bucket)
-      .remove([photo.storage_path]);
-
-    if (storageError) {
-      throw new Error(
-        `No se pudo eliminar el archivo del storage: ${storageError.message}`
-      );
+    if (paths.length > 0) {
+      await supabase.storage
+        .from("event-photos")
+        .remove(paths);
     }
   }
 
-  await deletePhotoById(photo.id);
+  // 🔥 eliminar fotos de DB
+  await supabase
+    .from("photos")
+    .delete()
+    .eq("guest_id", guestId);
 
-  const nextUploadedCount = await countUploadedPhotosByGuest(guest.id);
-  const maxAllowed = guest.max_allowed ?? 0;
+  // 🔥 eliminar invitado
+  await supabase
+    .from("guests")
+    .delete()
+    .eq("id", guestId);
 
-  await updateGuestUploadProgress(guest.id, nextUploadedCount, maxAllowed);
-
-  revalidatePath(`/admin/events/${eventId}/guests/${guestId}`);
+  // 🔥 refrescar vistas
   revalidatePath(`/admin/events/${eventId}/guests`);
   revalidatePath(`/admin/events/${eventId}`);
 }

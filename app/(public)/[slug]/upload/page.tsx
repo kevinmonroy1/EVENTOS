@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getPublicEventBySlug } from "@/server/repositories/public-events.repository";
 import { getGuestById } from "@/server/repositories/guests.repository";
@@ -42,50 +43,43 @@ export default async function UploadPage({
   }
 
   const uploadedPhotos = await getUploadedPhotosByGuest(guest.id);
-  const progress = maxAllowed > 0 ? Math.round((uploadedCount / maxAllowed) * 100) : 0;
+  const progress =
+    maxAllowed > 0
+      ? Math.round((uploadedCount / maxAllowed) * 100)
+      : 0;
 
   return (
     <div className="space-y-6">
+
+      {/* 💎 HERO MEJORADO */}
       <section className="wedding-card p-7">
         <p className="wedding-label">{event.couple_names}</p>
 
         <h1 className="mt-3 text-3xl font-semibold wedding-title">
-          Hola, {guest.display_name}
+          Hola, {guest.display_name} 👋
         </h1>
 
         <div className="wedding-divider mt-4" />
 
         <p className="mt-5 leading-7 wedding-muted">
-          Estás compartiendo tus recuerdos en <strong>{event.name}</strong>.
+          Estás formando parte de un momento único.  
+          Comparte tus recuerdos en <strong>{event.name}</strong> 💚
         </p>
+
+        {/* 🔥 BOTÓN NUEVO */}
+        <Link
+          href={`/${slug}/shared?guestId=${guest.id}`}
+          className="mt-6 block rounded-2xl border border-[var(--color-primary)] px-4 py-3 text-center text-sm font-medium text-[var(--color-primary)] transition hover:bg-[var(--color-primary-soft)]"
+        >
+          Ver álbum compartido
+        </Link>
       </section>
 
+      {/* 📸 SUBIR FOTOS PRIMERO */}
       <section className="wedding-card p-7">
-        <h2 className="text-2xl font-semibold wedding-title">Tu progreso</h2>
-
-        <div className="wedding-divider mt-3" />
-
-        <div className="mt-5">
-          <div className="h-3 w-full rounded-full bg-[var(--color-border-soft)]">
-            <div
-              className="h-3 rounded-full bg-[var(--color-primary)] transition-all"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-
-          <div className="mt-3 flex justify-between text-sm wedding-muted">
-            <span>{uploadedCount} fotos</span>
-            <span>{maxAllowed} máximo</span>
-          </div>
-
-          <p className="mt-3 text-sm wedding-muted">
-            Te faltan {remainingCount} foto(s) para completar tu participación.
-          </p>
-        </div>
-      </section>
-
-      <section className="wedding-card p-7">
-        <h2 className="text-2xl font-semibold wedding-title">Subir fotos</h2>
+        <h2 className="text-2xl font-semibold wedding-title">
+          Subir fotos
+        </h2>
 
         <div className="wedding-divider mt-3" />
 
@@ -104,9 +98,43 @@ export default async function UploadPage({
         </div>
       </section>
 
+      {/* 📊 PROGRESO ABAJO */}
+      <section className="wedding-card p-7">
+        <h2 className="text-2xl font-semibold wedding-title">
+          Tu progreso
+        </h2>
+
+        <div className="wedding-divider mt-3" />
+
+        <div className="mt-5">
+          <div className="h-3 w-full rounded-full bg-[var(--color-border-soft)]">
+            <div
+              className="h-3 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-700 transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <div className="mt-3 flex justify-between text-sm wedding-muted">
+            <span>{uploadedCount} fotos</span>
+            <span>{maxAllowed} máximo</span>
+          </div>
+
+          <p className="mt-3 text-sm wedding-muted">
+            {uploadedCount === 0
+              ? "Aún no has subido fotos."
+              : uploadedCount < maxAllowed
+              ? `Te faltan ${remainingCount} foto(s) para completar tu participación.`
+              : "Ya completaste tu participación 🎉"}
+          </p>
+        </div>
+      </section>
+
+      {/* 📷 TUS FOTOS */}
       <section className="wedding-card p-7">
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold wedding-title">Tus fotos</h2>
+          <h2 className="text-2xl font-semibold wedding-title">
+            Tus fotos
+          </h2>
 
           <span className="rounded-full border border-[var(--color-border-soft)] px-3 py-1 text-sm wedding-muted">
             {uploadedPhotos.length}
@@ -124,7 +152,7 @@ export default async function UploadPage({
             {uploadedPhotos.map((photo) => (
               <div
                 key={photo.id}
-                className="overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-white"
+                className="overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-white shadow-sm"
               >
                 <div className="relative h-36 w-full">
                   <Image
@@ -140,6 +168,7 @@ export default async function UploadPage({
           </div>
         )}
       </section>
+
     </div>
   );
 }

@@ -18,10 +18,7 @@ export default async function UploadPage({
   const { guestId } = await searchParams;
 
   const event = await getPublicEventBySlug(slug);
-
-  if (!event) {
-    notFound();
-  }
+  if (!event) notFound();
 
   if (!event.is_active) {
     redirect(`/${slug}/closed`);
@@ -32,7 +29,6 @@ export default async function UploadPage({
   }
 
   const guest = await getGuestById(guestId);
-
   if (!guest || guest.event_id !== event.id) {
     notFound();
   }
@@ -47,10 +43,13 @@ export default async function UploadPage({
 
   const uploadedPhotos = await getUploadedPhotosByGuest(guest.id);
 
+  const progress = Math.round((uploadedCount / maxAllowed) * 100);
+
   return (
     <div className="space-y-6">
+      {/* HEADER */}
       <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <p className="text-sm uppercase tracking-[0.2em] text-stone-500">
+        <p className="text-xs uppercase tracking-[0.25em] text-stone-400">
           {event.couple_names}
         </p>
 
@@ -58,40 +57,49 @@ export default async function UploadPage({
           Hola, {guest.display_name}
         </h1>
 
-        <p className="mt-3 text-stone-600">
-          Ya estás dentro del evento <strong>{event.name}</strong>.
+        <p className="mt-2 text-stone-600">
+          Estás compartiendo tus recuerdos en{" "}
+          <strong>{event.name}</strong>.
         </p>
       </section>
 
+      {/* PROGRESO */}
       <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-stone-900">Tu progreso</h2>
+        <h2 className="text-lg font-semibold text-stone-900">
+          Tu progreso
+        </h2>
 
-        <div className="mt-4 space-y-3 text-stone-700">
-          <p>
-            <span className="font-medium">Fotos subidas:</span> {uploadedCount}
-          </p>
-          <p>
-            <span className="font-medium">Máximo permitido:</span> {maxAllowed}
-          </p>
-          <p>
-            <span className="font-medium">Fotos restantes:</span> {remainingCount}
-          </p>
-          <p>
-            <span className="font-medium">Estado:</span> {guest.status}
+        <div className="mt-4">
+          {/* barra */}
+          <div className="h-3 w-full rounded-full bg-stone-200">
+            <div
+              className="h-3 rounded-full bg-black transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <div className="mt-3 flex justify-between text-sm text-stone-600">
+            <span>{uploadedCount} fotos</span>
+            <span>{maxAllowed} máximo</span>
+          </div>
+
+          <p className="mt-2 text-sm text-stone-500">
+            Te faltan {remainingCount} foto(s)
           </p>
         </div>
       </section>
 
+      {/* UPLOAD */}
       <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-stone-900">
-          Subida de fotos
+        <h2 className="text-lg font-semibold text-stone-900">
+          Subir fotos
         </h2>
 
-        <p className="mt-3 text-stone-600">
-          Selecciona tus imágenes y revisa tus miniaturas antes de enviarlas.
+        <p className="mt-2 text-sm text-stone-600">
+          Puedes elegir desde tu galería o tomar fotos en el momento.
         </p>
 
-        <div className="mt-5">
+        <div className="mt-4">
           <PhotoUploadClient
             slug={slug}
             guestId={guest.id}
@@ -102,26 +110,28 @@ export default async function UploadPage({
         </div>
       </section>
 
+      {/* GALERÍA */}
       <section className="rounded-3xl border bg-white p-6 shadow-sm">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-stone-900">
-            Tus fotos registradas
+          <h2 className="text-lg font-semibold text-stone-900">
+            Tus fotos
           </h2>
+
           <span className="text-sm text-stone-500">
-            {uploadedPhotos.length} foto(s)
+            {uploadedPhotos.length}
           </span>
         </div>
 
         {uploadedPhotos.length === 0 ? (
-          <p className="mt-4 text-stone-600">
-            Aún no has registrado fotos en este evento.
+          <p className="mt-4 text-sm text-stone-500">
+            Aún no has subido fotos.
           </p>
         ) : (
           <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
             {uploadedPhotos.map((photo) => (
               <div
                 key={photo.id}
-                className="overflow-hidden rounded-2xl border bg-stone-50"
+                className="overflow-hidden rounded-2xl border"
               >
                 <div className="relative h-36 w-full">
                   <Image
@@ -131,12 +141,6 @@ export default async function UploadPage({
                     className="object-cover"
                     unoptimized
                   />
-                </div>
-
-                <div className="space-y-1 p-3">
-                  <p className="line-clamp-2 text-xs text-stone-700">
-                    {photo.original_filename}
-                  </p>
                 </div>
               </div>
             ))}

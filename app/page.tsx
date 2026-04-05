@@ -14,12 +14,12 @@ export default function HomePage() {
           </h1>
 
           <p className="mt-3 max-w-2xl text-stone-600">
-            Desde aquí puedes administrar tus eventos, entrar rápido al panel y
-            revisar la parte pública del proyecto.
+            Desde aquí puedes administrar tus eventos, crear nuevos y revisar
+            los invitados registrados dentro de cada evento.
           </p>
         </section>
 
-        <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <Link
             href="/admin/events"
             className="rounded-3xl border bg-white p-6 shadow-sm transition hover:bg-stone-100"
@@ -47,21 +47,6 @@ export default function HomePage() {
             </h2>
             <p className="mt-2 text-sm text-stone-600">
               Crea un nuevo evento con su nombre, slug y configuración inicial.
-            </p>
-          </Link>
-
-          <Link
-            href="/admin"
-            className="rounded-3xl border bg-white p-6 shadow-sm transition hover:bg-stone-100"
-          >
-            <p className="text-sm uppercase tracking-[0.15em] text-stone-500">
-              Acceso rápido
-            </p>
-            <h2 className="mt-2 text-xl font-semibold text-stone-900">
-              Ir al panel
-            </h2>
-            <p className="mt-2 text-sm text-stone-600">
-              Abre directamente el panel administrativo principal.
             </p>
           </Link>
 

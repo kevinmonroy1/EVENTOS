@@ -144,9 +144,7 @@ export default function PhotoUploadClient({
 
         setSelectedImages([]);
 
-        setMessage(
-          `${guestName}, tus fotos se subieron correctamente ✨`
-        );
+        setMessage(`${guestName}, tus fotos se subieron correctamente ✨`);
 
         setTimeout(() => {
           window.location.reload();
@@ -159,20 +157,36 @@ export default function PhotoUploadClient({
 
   return (
     <>
-      {/* LOADING OVERLAY */}
       <AnimatePresence>
         {isPending && (
           <motion.div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/35 backdrop-blur-[2px] px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
             <motion.div
-              className="h-12 w-12 rounded-full border-4 border-emerald-600 border-t-transparent"
-              animate={{ rotate: 360 }}
-              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-            />
+              initial={{ opacity: 0, scale: 0.94, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.96, y: 8 }}
+              transition={{ duration: 0.22, ease: "easeOut" }}
+              className="w-full max-w-xs rounded-3xl border border-[var(--color-border-soft)] bg-white px-6 py-6 text-center shadow-xl"
+            >
+              <motion.div
+                className="mx-auto h-12 w-12 rounded-full border-4 border-emerald-600 border-t-transparent"
+                animate={{ rotate: 360 }}
+                transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+              />
+
+              <h3 className="mt-4 text-base font-semibold wedding-title">
+                Estamos guardando tus recuerdos
+              </h3>
+
+              <p className="mt-2 text-sm leading-6 wedding-muted">
+                Esto tardará solo un momento mientras preparamos tus fotos con
+                cariño.
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -187,7 +201,6 @@ export default function PhotoUploadClient({
           onChange={handleFileChange}
         />
 
-        {/* CARD */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -199,7 +212,6 @@ export default function PhotoUploadClient({
 
           <p className="mt-2 text-sm wedding-muted">{helperText}</p>
 
-          {/* BOTONES */}
           <div className="mt-5 flex flex-col gap-3">
             <motion.button
               whileTap={{ scale: 0.96 }}
@@ -220,11 +232,10 @@ export default function PhotoUploadClient({
               disabled={selectedImages.length === 0 || isPending}
               className="wedding-button-secondary rounded-2xl px-4 py-3 disabled:opacity-50"
             >
-              {isPending ? "Subiendo..." : "Subir fotos"}
+              {isPending ? "Preparando carga..." : "Subir fotos"}
             </motion.button>
           </div>
 
-          {/* MENSAJE */}
           <AnimatePresence>
             {message && (
               <motion.div
@@ -239,10 +250,9 @@ export default function PhotoUploadClient({
           </AnimatePresence>
         </motion.div>
 
-        {/* PREVIEW */}
         {selectedImages.length > 0 && (
           <div>
-            <p className="text-sm font-medium wedding-title mb-3">
+            <p className="mb-3 text-sm font-medium wedding-title">
               Vista previa
             </p>
 

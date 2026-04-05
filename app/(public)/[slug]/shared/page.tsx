@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getPublicEventBySlug } from "@/server/repositories/public-events.repository";
@@ -8,6 +7,7 @@ import {
   getUploadedPhotosByEventPaginated,
   getUploadedPhotosByGuest,
 } from "@/server/repositories/photos.repository";
+import SharedGalleryModal from "@/components/public/shared-gallery-modal";
 
 interface SharedPageProps {
   params: Promise<{ slug: string }>;
@@ -84,8 +84,6 @@ export default async function SharedPage({
   return (
     <div className="wedding-shell">
       <div className="wedding-container space-y-6">
-
-        {/* 💎 HERO */}
         <section className="wedding-card wedding-hero p-7">
           <p className="wedding-label">{event.couple_names}</p>
 
@@ -104,7 +102,6 @@ export default async function SharedPage({
           </p>
         </section>
 
-        {/* 👤 PARTICIPACIÓN */}
         {guest && (
           <section className="wedding-card p-7">
             <h2 className="text-2xl wedding-title">
@@ -134,7 +131,6 @@ export default async function SharedPage({
           </section>
         )}
 
-        {/* 🖼 GALERÍA */}
         <section className="wedding-card p-7">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl wedding-title">
@@ -154,21 +150,7 @@ export default async function SharedPage({
             </div>
           ) : (
             <>
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {photos.map((photo) => (
-                  <div key={photo.id} className="wedding-photo-frame">
-                    <div className="relative h-40 w-full">
-                      <Image
-                        src={photo.public_url}
-                        alt={photo.original_filename}
-                        fill
-                        className="object-cover"
-                        unoptimized
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <SharedGalleryModal photos={photos} />
 
               {hasMorePhotos && (
                 <div className="mt-8 flex justify-center">
@@ -183,7 +165,6 @@ export default async function SharedPage({
             </>
           )}
         </section>
-
       </div>
     </div>
   );

@@ -27,7 +27,12 @@ export default async function AdminEventDetailPage({
   const publicUrl = `/${event.slug}`;
   const sharedUrl = `/${event.slug}/shared`;
   const uploadEntryUrl = `/${event.slug}/enter`;
-  const baseUrl = "http://localhost:3000";
+
+  // 🔥 BASE URL DINÁMICA (PRODUCCIÓN)
+  const baseUrl =
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+    "http://localhost:3000";
+
   const publicEventUrl = `${baseUrl}/${event.slug}`;
   const enterEventUrl = `${baseUrl}/${event.slug}/enter`;
 
@@ -109,73 +114,6 @@ export default async function AdminEventDetailPage({
           <p className="mt-2 text-2xl font-semibold text-stone-900">
             {event.shared_gallery_enabled ? "Activa" : "Desactivada"}
           </p>
-        </div>
-      </section>
-
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-stone-900">
-          Información del evento
-        </h2>
-
-        <div className="mt-4 space-y-3 text-stone-700">
-          <p>
-            <span className="font-medium">Nombre:</span> {event.name}
-          </p>
-          <p>
-            <span className="font-medium">Pareja:</span> {event.couple_names}
-          </p>
-          <p>
-            <span className="font-medium">Slug:</span> {event.slug}
-          </p>
-          <p>
-            <span className="font-medium">Máx. fotos por invitado:</span>{" "}
-            {event.max_photos_per_guest}
-          </p>
-          <p>
-            <span className="font-medium">Estado:</span>{" "}
-            {event.is_active ? "Activo" : "Inactivo"}
-          </p>
-        </div>
-      </section>
-
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <h2 className="text-xl font-semibold text-stone-900">
-          Accesos rápidos
-        </h2>
-
-        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <Link href={publicUrl} className="rounded-2xl border px-4 py-3 text-stone-800">
-            Ver página pública
-          </Link>
-
-          <Link href={uploadEntryUrl} className="rounded-2xl border px-4 py-3 text-stone-800">
-            Ver entrada
-          </Link>
-
-          <Link href={sharedUrl} className="rounded-2xl border px-4 py-3 text-stone-800">
-            Ver galería compartida
-          </Link>
-
-          <Link
-            href={`/admin/events/${event.id}/album`}
-            className="rounded-2xl border px-4 py-3 text-stone-800"
-          >
-            Ver álbum
-          </Link>
-
-          <Link
-            href={`/admin/events/${event.id}/guests`}
-            className="rounded-2xl border px-4 py-3 text-stone-800"
-          >
-            Ver invitados
-          </Link>
-
-          <Link
-            href={`/admin/events/${event.id}/summary`}
-            className="rounded-2xl border px-4 py-3 text-stone-800"
-          >
-            Ver resumen
-          </Link>
         </div>
       </section>
 

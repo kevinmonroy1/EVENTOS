@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { getPublicEventBySlug } from "@/server/repositories/public-events.repository";
 import {
   getGuestById,
@@ -50,13 +51,14 @@ export async function uploadGuestPhotosAction(
   const remainingCount = Math.max(maxAllowed - currentUploaded, 0);
 
   if (remainingCount <= 0) {
-    throw new Error("Ya alcanzaste el máximo de fotos permitido.");
+    redirect(`/${slug}/done`);
   }
 
   if (filesData.length > remainingCount) {
     throw new Error(`Solo puedes subir ${remainingCount} foto(s) más.`);
   }
 
+  // 👉 CREAR REGISTROS
   const records = filesData.map((file) => ({
     eventId: event.id,
     guestId: guest.id,
@@ -72,6 +74,7 @@ export async function uploadGuestPhotosAction(
 
   await createPhotoRecords(records);
 
+  // 👉 BACKUP DRIVE
   for (const file of filesData) {
     try {
       await uploadFromUrlToDrive(
@@ -87,11 +90,22 @@ export async function uploadGuestPhotosAction(
     }
   }
 
+  // 👉 ACTUALIZAR CONTADOR
   const nextUploadedCount = await countUploadedPhotosByGuest(guest.id);
 
-  await updateGuestUploadProgress(guest.id, nextUploadedCount, maxAllowed);
+  await updateGuestUploadProgress(
+    guest.id,
+    nextUploadedCount,
+    maxAllowed
+  );
 
+  // 👉 REVALIDAR
   revalidatePath(`/${slug}/upload`);
   revalidatePath(`/${slug}/shared`);
   revalidatePath(`/${slug}`);
+
+  // 🔥 REDIRECCIÓN FINAL (CLAVE)
+  if (nextUploadedCount >= maxAllowed) {
+    redirect(`/${slug}/done`);
+  }
 }

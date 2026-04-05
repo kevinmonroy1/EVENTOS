@@ -3,6 +3,7 @@
 import { useMemo, useRef, useState, useTransition } from "react";
 import { uploadGuestPhotosAction } from "@/app/(public)/[slug]/upload/actions";
 import { createClient } from "@/lib/supabase/client";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SelectedImage {
   id: string;
@@ -146,6 +147,10 @@ export default function PhotoUploadClient({
         setMessage(
           `${guestName}, tus fotos se subieron correctamente ✨`
         );
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
       } catch (error) {
         setMessage("Ocurrió un error al subir las fotos.");
       }
@@ -153,86 +158,124 @@ export default function PhotoUploadClient({
   }
 
   return (
-    <div className="space-y-6">
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        multiple
-        className="hidden"
-        onChange={handleFileChange}
-      />
-
-      {/* CARD PRINCIPAL */}
-      <div className="rounded-3xl border border-[var(--color-border-soft)] bg-white p-6">
-        <p className="text-sm font-medium wedding-title">
-          Selección de fotografías
-        </p>
-
-        <p className="mt-2 text-sm wedding-muted">{helperText}</p>
-
-        {/* BOTONES */}
-        <div className="mt-5 flex flex-col gap-3">
-          <button
-            type="button"
-            onClick={handleOpenPicker}
-            disabled={remainingCount <= 0 || availableToSelect <= 0 || isPending}
-            className="wedding-button-primary rounded-2xl px-4 py-3 transition disabled:opacity-50"
+    <>
+      {/* LOADING OVERLAY */}
+      <AnimatePresence>
+        {isPending && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
           >
-            Elegir fotos
-          </button>
+            <motion.div
+              className="h-12 w-12 rounded-full border-4 border-emerald-600 border-t-transparent"
+              animate={{ rotate: 360 }}
+              transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={selectedImages.length === 0 || isPending}
-            className="wedding-button-secondary rounded-2xl px-4 py-3 transition disabled:opacity-50"
-          >
-            {isPending ? "Subiendo..." : "Subir fotos"}
-          </button>
-        </div>
+      <div className="space-y-6">
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={handleFileChange}
+        />
 
-        {/* MENSAJE */}
-        {message && (
-          <div className="mt-5 rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-bg)] p-3 text-sm wedding-muted">
-            {message}
+        {/* CARD */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl border border-[var(--color-border-soft)] bg-white p-6 shadow-sm"
+        >
+          <p className="text-sm font-medium wedding-title">
+            Selección de fotografías
+          </p>
+
+          <p className="mt-2 text-sm wedding-muted">{helperText}</p>
+
+          {/* BOTONES */}
+          <div className="mt-5 flex flex-col gap-3">
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              whileHover={{ scale: 1.02 }}
+              type="button"
+              onClick={handleOpenPicker}
+              disabled={remainingCount <= 0 || availableToSelect <= 0 || isPending}
+              className="wedding-button-primary rounded-2xl px-4 py-3 disabled:opacity-50"
+            >
+              Elegir fotos
+            </motion.button>
+
+            <motion.button
+              whileTap={{ scale: 0.96 }}
+              whileHover={{ scale: 1.02 }}
+              type="button"
+              onClick={handleSubmit}
+              disabled={selectedImages.length === 0 || isPending}
+              className="wedding-button-secondary rounded-2xl px-4 py-3 disabled:opacity-50"
+            >
+              {isPending ? "Subiendo..." : "Subir fotos"}
+            </motion.button>
+          </div>
+
+          {/* MENSAJE */}
+          <AnimatePresence>
+            {message && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                className="mt-5 rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-bg)] p-3 text-sm wedding-muted"
+              >
+                {message}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* PREVIEW */}
+        {selectedImages.length > 0 && (
+          <div>
+            <p className="text-sm font-medium wedding-title mb-3">
+              Vista previa
+            </p>
+
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {selectedImages.map((image) => (
+                <motion.div
+                  key={image.id}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-white shadow-sm"
+                >
+                  <img
+                    src={image.previewUrl}
+                    alt={image.file.name}
+                    className="h-32 w-full object-cover"
+                  />
+
+                  <div className="p-2">
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(image.id)}
+                      className="w-full rounded-xl border border-[var(--color-border-soft)] py-1 text-sm wedding-muted"
+                    >
+                      Quitar
+                    </button>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </div>
         )}
       </div>
-
-      {/* PREVIEW */}
-      {selectedImages.length > 0 && (
-        <div>
-          <p className="text-sm font-medium wedding-title mb-3">
-            Vista previa
-          </p>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {selectedImages.map((image) => (
-              <div
-                key={image.id}
-                className="overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-white"
-              >
-                <img
-                  src={image.previewUrl}
-                  alt={image.file.name}
-                  className="h-32 w-full object-cover"
-                />
-
-                <div className="p-2">
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveImage(image.id)}
-                    className="w-full rounded-xl border border-[var(--color-border-soft)] py-1 text-sm wedding-muted"
-                  >
-                    Quitar
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 }

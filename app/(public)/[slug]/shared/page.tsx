@@ -25,9 +25,7 @@ export default async function SharedPage({
 
   const event = await getPublicEventBySlug(slug);
 
-  if (!event) {
-    notFound();
-  }
+  if (!event) notFound();
 
   if (!event.is_active) {
     redirect(`/${slug}/closed`);
@@ -35,15 +33,17 @@ export default async function SharedPage({
 
   if (!event.shared_gallery_enabled) {
     return (
-      <div className="space-y-6">
-        <section className="rounded-3xl border bg-white p-6 shadow-sm">
-          <h1 className="text-2xl font-semibold text-stone-900">
-            Recuerdos compartidos desactivados
-          </h1>
-          <p className="mt-3 text-stone-600">
-            Este evento no tiene activa la galería compartida por el momento.
-          </p>
-        </section>
+      <div className="wedding-shell">
+        <div className="wedding-container space-y-6">
+          <section className="wedding-card p-7">
+            <h1 className="text-2xl wedding-title">
+              Recuerdos no disponibles
+            </h1>
+            <p className="mt-3 wedding-muted">
+              La galería compartida aún no está disponible para este evento.
+            </p>
+          </section>
+        </div>
       </div>
     );
   }
@@ -67,6 +67,7 @@ export default async function SharedPage({
   }
 
   const totalPhotos = await countUploadedPhotosByEvent(event.id);
+
   const photos = await getUploadedPhotosByEventPaginated(
     event.id,
     PHOTOS_PER_PAGE,
@@ -81,94 +82,109 @@ export default async function SharedPage({
     : `/${slug}/shared?offset=${nextOffset}`;
 
   return (
-    <div className="space-y-6">
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <p className="text-sm uppercase tracking-[0.2em] text-stone-500">
-          {event.couple_names}
-        </p>
+    <div className="wedding-shell">
+      <div className="wedding-container space-y-6">
 
-        <h1 className="mt-2 text-2xl font-semibold text-stone-900">
-          {guest
-            ? `Gracias por compartir tus recuerdos, ${guest.display_name}`
-            : "Recuerdos compartidos"}
-        </h1>
+        {/* 💎 HERO */}
+        <section className="wedding-card wedding-hero p-7">
+          <p className="wedding-label">{event.couple_names}</p>
 
-        <p className="mt-3 text-stone-600">
-          {guest
-            ? `Hemos registrado ${guestUploadedPhotos.length} foto(s) de tu parte. Gracias por ser parte de este momento especial.`
-            : "Entre sonrisas, abrazos y alegría, cada fotografía conserva un recuerdo inolvidable."}
-        </p>
-      </section>
+          <h1 className="mt-4 text-4xl wedding-title">
+            {guest
+              ? `Gracias, ${guest.display_name} ✨`
+              : "Recuerdos compartidos"}
+          </h1>
 
-      {guest ? (
-        <section className="rounded-3xl border bg-white p-6 shadow-sm">
-          <h2 className="text-xl font-semibold text-stone-900">
-            Tu participación
-          </h2>
+          <div className="wedding-divider mt-5" />
 
-          <div className="mt-4 space-y-3 text-stone-700">
-            <p>
-              <span className="font-medium">Invitado:</span> {guest.display_name}
-            </p>
-            <p>
-              <span className="font-medium">Fotos compartidas:</span>{" "}
-              {guestUploadedPhotos.length}
-            </p>
-            <p>
-              <span className="font-medium">Estado:</span> {guest.status}
-            </p>
-          </div>
-        </section>
-      ) : null}
-
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold text-stone-900">
-            Galería del evento
-          </h2>
-          <span className="text-sm text-stone-500">
-            {totalPhotos} foto(s)
-          </span>
-        </div>
-
-        {photos.length === 0 ? (
-          <p className="mt-4 text-stone-600">
-            Aún no hay fotos compartidas en este evento.
+          <p className="mt-5 wedding-muted leading-8">
+            {guest
+              ? `Hemos guardado ${guestUploadedPhotos.length} recuerdo(s) de tu parte. Gracias por formar parte de este momento tan especial.`
+              : "Cada fotografía es un fragmento de este día. Explora los recuerdos compartidos por todos los invitados."}
           </p>
-        ) : (
-          <>
-            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {photos.map((photo) => (
-                <div
-                  key={photo.id}
-                  className="overflow-hidden rounded-2xl border bg-stone-50"
-                >
-                  <div className="relative h-36 w-full">
-                    <Image
-                      src={photo.public_url}
-                      alt={photo.original_filename}
-                      fill
-                      className="object-cover"
-                      unoptimized
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
+        </section>
 
-            {hasMorePhotos ? (
-              <div className="mt-6 flex justify-center">
-                <Link
-                  href={nextPhotosHref}
-                  className="rounded-2xl border px-4 py-3 text-sm font-medium text-stone-800"
-                >
-                  Ver más fotos
-                </Link>
+        {/* 👤 PARTICIPACIÓN */}
+        {guest && (
+          <section className="wedding-card p-7">
+            <h2 className="text-2xl wedding-title">
+              Tu participación
+            </h2>
+
+            <div className="wedding-divider mt-3" />
+
+            <div className="mt-5 grid grid-cols-2 gap-4 text-sm wedding-muted">
+              <div>
+                <p className="wedding-soft">Invitado</p>
+                <p className="font-medium">{guest.display_name}</p>
               </div>
-            ) : null}
-          </>
+
+              <div>
+                <p className="wedding-soft">Fotos</p>
+                <p className="font-medium">
+                  {guestUploadedPhotos.length}
+                </p>
+              </div>
+
+              <div>
+                <p className="wedding-soft">Estado</p>
+                <p className="font-medium">{guest.status}</p>
+              </div>
+            </div>
+          </section>
         )}
-      </section>
+
+        {/* 🖼 GALERÍA */}
+        <section className="wedding-card p-7">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl wedding-title">
+              Galería del evento
+            </h2>
+
+            <span className="wedding-chip">
+              {totalPhotos}
+            </span>
+          </div>
+
+          <div className="wedding-divider mt-3" />
+
+          {photos.length === 0 ? (
+            <div className="wedding-empty mt-5 px-4 py-5 text-sm wedding-muted">
+              Aún no hay fotos compartidas en este evento.
+            </div>
+          ) : (
+            <>
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+                {photos.map((photo) => (
+                  <div key={photo.id} className="wedding-photo-frame">
+                    <div className="relative h-40 w-full">
+                      <Image
+                        src={photo.public_url}
+                        alt={photo.original_filename}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {hasMorePhotos && (
+                <div className="mt-8 flex justify-center">
+                  <Link
+                    href={nextPhotosHref}
+                    className="wedding-button-secondary px-6 py-3"
+                  >
+                    Ver más recuerdos
+                  </Link>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+
+      </div>
     </div>
   );
 }

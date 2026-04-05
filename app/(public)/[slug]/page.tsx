@@ -32,13 +32,6 @@ export default async function EventPublicPage({
             Un espacio creado para reunir con cariño las sonrisas, los abrazos y
             los recuerdos más especiales de este día.
           </p>
-
-          <div className="mt-6 wedding-mini-note px-4 py-4">
-            <p className="text-sm leading-6 wedding-soft">
-              Aquí podrás compartir tus fotografías y descubrir los momentos que
-              otros invitados también han querido conservar.
-            </p>
-          </div>
         </section>
 
         <section className="wedding-card p-7">

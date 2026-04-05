@@ -18,24 +18,28 @@ export default async function EnterPage({ params }: EnterPageProps) {
 
   return (
     <div className="space-y-6">
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <p className="text-sm uppercase tracking-[0.2em] text-stone-500">
-          {event.couple_names}
-        </p>
+      <section className="wedding-card p-7">
+        <p className="wedding-label">{event.couple_names}</p>
 
-        <h1 className="mt-2 text-2xl font-semibold text-stone-900">
+        <h1 className="mt-3 text-3xl font-semibold wedding-title">
           Ingresa tu nombre
         </h1>
 
-        <p className="mt-3 text-stone-600">
-          Escribe tu nombre para comenzar a compartir tus fotografías del evento.
+        <div className="wedding-divider mt-4" />
+
+        <p className="mt-5 leading-7 wedding-muted">
+          Escribe tu nombre para comenzar a compartir tus fotografías del
+          evento.
         </p>
       </section>
 
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <form action={submitAction} className="space-y-4">
+      <section className="wedding-card p-7">
+        <form action={submitAction} className="space-y-5">
           <div className="space-y-2">
-            <label htmlFor="guestName" className="text-sm font-medium text-stone-700">
+            <label
+              htmlFor="guestName"
+              className="text-sm font-medium text-[var(--color-primary)]"
+            >
               Tu nombre
             </label>
 
@@ -44,7 +48,7 @@ export default async function EnterPage({ params }: EnterPageProps) {
               name="guestName"
               type="text"
               placeholder="Ejemplo: Kevin"
-              className="w-full rounded-2xl border px-4 py-3 outline-none"
+              className="w-full rounded-2xl border border-[var(--color-border-soft)] bg-white px-4 py-3 text-[var(--color-text)] outline-none transition focus:border-[var(--color-gold)]"
               required
               minLength={2}
             />
@@ -52,7 +56,7 @@ export default async function EnterPage({ params }: EnterPageProps) {
 
           <button
             type="submit"
-            className="w-full rounded-2xl bg-stone-900 px-4 py-3 text-white"
+            className="wedding-button-primary w-full rounded-2xl px-4 py-3 transition"
           >
             Continuar
           </button>

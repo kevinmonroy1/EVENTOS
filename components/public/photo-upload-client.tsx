@@ -49,8 +49,8 @@ export default function PhotoUploadClient({
       return `Puedes subir hasta ${remainingCount} foto(s) más.`;
     }
 
-    return `Has seleccionado ${totalSelected} foto(s). Aún puedes agregar ${availableToSelect} más.`;
-  }, [remainingCount, totalSelected, availableToSelect]);
+    return `Has seleccionado ${totalSelected} foto(s).`;
+  }, [remainingCount, totalSelected]);
 
   function handleOpenPicker() {
     inputRef.current?.click();
@@ -91,16 +91,7 @@ export default function PhotoUploadClient({
     });
   }
 
-  async function uploadSingleFile(
-    supabase: any,
-    file: File
-  ): Promise<{
-    name: string;
-    type: string;
-    size: number;
-    storagePath: string;
-    publicUrl: string;
-  }> {
+  async function uploadSingleFile(supabase: any, file: File) {
     const extension = getFileExtension(file.name);
     const safeExtension = extension ? `.${extension}` : "";
     const fileName = `${crypto.randomUUID()}${safeExtension}`;
@@ -109,22 +100,15 @@ export default function PhotoUploadClient({
 
     const { error } = await supabase.storage
       .from("event-photos")
-      .upload(storagePath, file, {
-        cacheControl: "3600",
-        upsert: false,
-      });
+      .upload(storagePath, file);
 
     if (error) {
-      throw new Error(`Error subiendo "${file.name}": ${error.message}`);
+      throw new Error(`Error subiendo "${file.name}"`);
     }
 
     const { data } = supabase.storage
       .from("event-photos")
       .getPublicUrl(storagePath);
-
-    if (!data?.publicUrl) {
-      throw new Error("No se pudo obtener publicUrl.");
-    }
 
     return {
       name: file.name,
@@ -158,20 +142,18 @@ export default function PhotoUploadClient({
         });
 
         setSelectedImages([]);
+
         setMessage(
-          `${guestName}, se subieron ${filesData.length} foto(s) correctamente.`
+          `${guestName}, tus fotos se subieron correctamente ✨`
         );
       } catch (error) {
-        const errorMessage =
-          error instanceof Error ? error.message : "Error al subir fotos.";
-
-        setMessage(errorMessage);
+        setMessage("Ocurrió un error al subir las fotos.");
       }
     });
   }
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       <input
         ref={inputRef}
         type="file"
@@ -181,19 +163,21 @@ export default function PhotoUploadClient({
         onChange={handleFileChange}
       />
 
-      <div className="rounded-2xl border border-dashed bg-stone-50 p-5">
-        <p className="text-sm font-medium text-stone-800">
+      {/* CARD PRINCIPAL */}
+      <div className="rounded-3xl border border-[var(--color-border-soft)] bg-white p-6">
+        <p className="text-sm font-medium wedding-title">
           Selección de fotografías
         </p>
 
-        <p className="mt-2 text-sm text-stone-600">{helperText}</p>
+        <p className="mt-2 text-sm wedding-muted">{helperText}</p>
 
-        <div className="mt-4 flex flex-col gap-3 sm:flex-row">
+        {/* BOTONES */}
+        <div className="mt-5 flex flex-col gap-3">
           <button
             type="button"
             onClick={handleOpenPicker}
             disabled={remainingCount <= 0 || availableToSelect <= 0 || isPending}
-            className="rounded-2xl bg-stone-900 px-4 py-3 text-white disabled:opacity-50"
+            className="wedding-button-primary rounded-2xl px-4 py-3 transition disabled:opacity-50"
           >
             Elegir fotos
           </button>
@@ -202,40 +186,51 @@ export default function PhotoUploadClient({
             type="button"
             onClick={handleSubmit}
             disabled={selectedImages.length === 0 || isPending}
-            className="rounded-2xl border px-4 py-3 text-stone-800 disabled:opacity-50"
+            className="wedding-button-secondary rounded-2xl px-4 py-3 transition disabled:opacity-50"
           >
             {isPending ? "Subiendo..." : "Subir fotos"}
           </button>
         </div>
 
+        {/* MENSAJE */}
         {message && (
-          <p className="mt-4 rounded-xl bg-stone-100 px-3 py-2 text-sm">
+          <div className="mt-5 rounded-2xl border border-[var(--color-border-soft)] bg-[var(--color-bg)] p-3 text-sm wedding-muted">
             {message}
-          </p>
+          </div>
         )}
       </div>
 
+      {/* PREVIEW */}
       {selectedImages.length > 0 && (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {selectedImages.map((image) => (
-            <div key={image.id} className="overflow-hidden rounded-2xl border">
-              <img
-                src={image.previewUrl}
-                alt={image.file.name}
-                className="h-32 w-full object-cover"
-              />
+        <div>
+          <p className="text-sm font-medium wedding-title mb-3">
+            Vista previa
+          </p>
 
-              <div className="p-2">
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(image.id)}
-                  className="w-full rounded-xl border py-1 text-sm"
-                >
-                  Quitar
-                </button>
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {selectedImages.map((image) => (
+              <div
+                key={image.id}
+                className="overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-white"
+              >
+                <img
+                  src={image.previewUrl}
+                  alt={image.file.name}
+                  className="h-32 w-full object-cover"
+                />
+
+                <div className="p-2">
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveImage(image.id)}
+                    className="w-full rounded-xl border border-[var(--color-border-soft)] py-1 text-sm wedding-muted"
+                  >
+                    Quitar
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
     </div>

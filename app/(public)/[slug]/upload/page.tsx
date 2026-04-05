@@ -42,64 +42,58 @@ export default async function UploadPage({
   }
 
   const uploadedPhotos = await getUploadedPhotosByGuest(guest.id);
-
-  const progress = Math.round((uploadedCount / maxAllowed) * 100);
+  const progress = maxAllowed > 0 ? Math.round((uploadedCount / maxAllowed) * 100) : 0;
 
   return (
     <div className="space-y-6">
-      {/* HEADER */}
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <p className="text-xs uppercase tracking-[0.25em] text-stone-400">
-          {event.couple_names}
-        </p>
+      <section className="wedding-card p-7">
+        <p className="wedding-label">{event.couple_names}</p>
 
-        <h1 className="mt-2 text-2xl font-semibold text-stone-900">
+        <h1 className="mt-3 text-3xl font-semibold wedding-title">
           Hola, {guest.display_name}
         </h1>
 
-        <p className="mt-2 text-stone-600">
-          Estás compartiendo tus recuerdos en{" "}
-          <strong>{event.name}</strong>.
+        <div className="wedding-divider mt-4" />
+
+        <p className="mt-5 leading-7 wedding-muted">
+          Estás compartiendo tus recuerdos en <strong>{event.name}</strong>.
         </p>
       </section>
 
-      {/* PROGRESO */}
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-stone-900">
-          Tu progreso
-        </h2>
+      <section className="wedding-card p-7">
+        <h2 className="text-2xl font-semibold wedding-title">Tu progreso</h2>
 
-        <div className="mt-4">
-          {/* barra */}
-          <div className="h-3 w-full rounded-full bg-stone-200">
+        <div className="wedding-divider mt-3" />
+
+        <div className="mt-5">
+          <div className="h-3 w-full rounded-full bg-[var(--color-border-soft)]">
             <div
-              className="h-3 rounded-full bg-black transition-all"
+              className="h-3 rounded-full bg-[var(--color-primary)] transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
 
-          <div className="mt-3 flex justify-between text-sm text-stone-600">
+          <div className="mt-3 flex justify-between text-sm wedding-muted">
             <span>{uploadedCount} fotos</span>
             <span>{maxAllowed} máximo</span>
           </div>
 
-          <p className="mt-2 text-sm text-stone-500">
-            Te faltan {remainingCount} foto(s)
+          <p className="mt-3 text-sm wedding-muted">
+            Te faltan {remainingCount} foto(s) para completar tu participación.
           </p>
         </div>
       </section>
 
-      {/* UPLOAD */}
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
-        <h2 className="text-lg font-semibold text-stone-900">
-          Subir fotos
-        </h2>
+      <section className="wedding-card p-7">
+        <h2 className="text-2xl font-semibold wedding-title">Subir fotos</h2>
 
-        <p className="mt-2 text-sm text-stone-600">
-          Puedes elegir desde tu galería o tomar fotos en el momento.
+        <div className="wedding-divider mt-3" />
+
+        <p className="mt-5 text-sm leading-6 wedding-muted">
+          Puedes elegir imágenes desde tu galería o tomar fotos en el momento.
         </p>
 
-        <div className="mt-4">
+        <div className="mt-5">
           <PhotoUploadClient
             slug={slug}
             guestId={guest.id}
@@ -110,20 +104,19 @@ export default async function UploadPage({
         </div>
       </section>
 
-      {/* GALERÍA */}
-      <section className="rounded-3xl border bg-white p-6 shadow-sm">
+      <section className="wedding-card p-7">
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-stone-900">
-            Tus fotos
-          </h2>
+          <h2 className="text-2xl font-semibold wedding-title">Tus fotos</h2>
 
-          <span className="text-sm text-stone-500">
+          <span className="rounded-full border border-[var(--color-border-soft)] px-3 py-1 text-sm wedding-muted">
             {uploadedPhotos.length}
           </span>
         </div>
 
+        <div className="wedding-divider mt-3" />
+
         {uploadedPhotos.length === 0 ? (
-          <p className="mt-4 text-sm text-stone-500">
+          <p className="mt-5 text-sm wedding-muted">
             Aún no has subido fotos.
           </p>
         ) : (
@@ -131,7 +124,7 @@ export default async function UploadPage({
             {uploadedPhotos.map((photo) => (
               <div
                 key={photo.id}
-                className="overflow-hidden rounded-2xl border"
+                className="overflow-hidden rounded-2xl border border-[var(--color-border-soft)] bg-white"
               >
                 <div className="relative h-36 w-full">
                   <Image

@@ -69,13 +69,20 @@ export default async function EventAlbumPage({
           Todas las fotos subidas por los invitados.
         </p>
 
-        <div className="mt-4">
+        <div className="mt-4 flex flex-wrap gap-3">
           <Link
             href={`/admin/events/${event.id}`}
             className="rounded-2xl border px-4 py-2 text-sm text-stone-800"
           >
             ← Volver al evento
           </Link>
+
+          <a
+            href={`/api/download-event-photos/${event.id}`}
+            className="rounded-2xl bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700"
+          >
+            Descargar todas las fotos
+          </a>
         </div>
       </section>
 

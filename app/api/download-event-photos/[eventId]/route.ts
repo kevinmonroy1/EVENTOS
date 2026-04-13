@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import JSZip from "jszip";
 import { getUploadedPhotosByEvent } from "@/server/repositories/photos.repository";
 
@@ -12,7 +11,7 @@ export async function GET(_request: Request, context: RouteContext) {
   const photos = await getUploadedPhotosByEvent(eventId);
 
   if (!photos || photos.length === 0) {
-    return NextResponse.json(
+    return Response.json(
       { error: "No hay fotos para descargar." },
       { status: 404 }
     );
@@ -38,12 +37,17 @@ export async function GET(_request: Request, context: RouteContext) {
     }
   }
 
-  const zipBuffer = await zip.generateAsync({ type: "nodebuffer" });
+  const zipArrayBuffer = await zip.generateAsync({ type: "arraybuffer" });
 
-  return new NextResponse(zipBuffer, {
+  const zipBlob = new Blob([zipArrayBuffer], {
+    type: "application/zip",
+  });
+
+  return new Response(zipBlob, {
     headers: {
       "Content-Type": "application/zip",
       "Content-Disposition": 'attachment; filename="album-evento.zip"',
+      "Cache-Control": "no-store",
     },
   });
 }
